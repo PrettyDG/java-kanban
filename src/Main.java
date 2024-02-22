@@ -1,53 +1,41 @@
-import java.util.Scanner;
-
 public class Main {
-    static Scanner sc;
-
     public static void main(String[] args) {
-        sc = new Scanner(System.in);
         TaskManager taskManager = new TaskManager();
 
-        while (true) {
-            printMenu();
-            int menuNumber = sc.nextInt();
-            switch (menuNumber) {
-                case 1:
-                    System.out.println("Выберите тип новой задачи: 1 - Обычная задача, 2 - Эпик, 3 - Подзадача");
-                    int taskTypeNumber = sc.nextInt();
-                    switch (taskTypeNumber) {
-                        case 1:
-                            DefaultTask defaultTask = new DefaultTask("Уборка", "Уборка дома", TaskStage.NEW);
-                            taskManager.createDefaultTask(defaultTask);
-                            break;
-                        case 2:
+        DefaultTask defaultTask1 = new DefaultTask("Уборка", "Уборка в комнате", TaskStage.NEW);
+        taskManager.createDefaultTask(defaultTask1);
 
-                            break;
-                        case 3:
+        DefaultTask defaultTask2 = new DefaultTask("Готовка", "Приготовить ужин"
+                , TaskStage.NEW);
+        taskManager.createDefaultTask(defaultTask2);
 
-                            break;
-                        default:
-                            System.out.println("Такого номера задачи нет");
-                    }
-                    break;
-                case 2:
 
-                    break;
-                case 3:
-                    taskManager.printDefaultTasks();
-                    break;
-                case 4:
-                    return;
-                default:
-                    System.out.println("Такого номера не существует");
-            }
-        }
-    }
+        Epic epic1 = new Epic("Переезд", "Переезд в другой город", TaskStage.NEW);
+        taskManager.createEpicTask(epic1);
+        Subtask subtask1 = new Subtask("Сбор вещей", "Собрать вещи по коробкам"
+                , TaskStage.IN_PROGRESS, epic1);
+        taskManager.createSubtask(subtask1, epic1);
+        Subtask subtask2 = new Subtask("Поиск билетов", "Выбрать билеты в другой город"
+                , TaskStage.IN_PROGRESS, epic1);
+        taskManager.createSubtask(subtask2,epic1);
 
-    static void printMenu() {
-        System.out.println("Введите номер меню:");
-        System.out.println("1 - Добавить новую задачу");
-        System.out.println("2 - Поменять статус задачи");
-        System.out.println("3 - Список задач");
-        System.out.println("4 - Выход");
+
+        Epic epic2 = new Epic("Завести домаш.животное", "Выбор и покупка домашнего животного"
+                , TaskStage.NEW);
+        taskManager.createEpicTask(epic2);
+        Subtask subtask3 = new Subtask("Выбор породы", "Изучение особенностей пород"
+                , TaskStage.IN_PROGRESS, epic2);
+        taskManager.createSubtask(subtask3, epic2);
+
+        taskManager.printDefaultTasks();
+        taskManager.printEpicTasks();
+        taskManager.printSubtask();
+
+        taskManager.deleteDefaultTask(0);
+        taskManager.printDefaultTasks();
+
+        taskManager.deleteEpicTask(2);
+        taskManager.printEpicTasks();
+        taskManager.printSubtask();
     }
 }
