@@ -1,14 +1,17 @@
-class DefaultTask {
+package Models;
+
+import Utils.TaskStage;
+
+public class DefaultTask {
     private String taskName;
     private String description;
-    public TaskStage stage;
+    private TaskStage stage;
     public int id;
 
 
-    public DefaultTask(String taskName, String description, TaskStage stage) {
+    public DefaultTask(String taskName, String description) {
         this.taskName = taskName;
         this.description = description;
-        this.stage = stage;
     }
 
     public void setId(int id) {
@@ -17,6 +20,10 @@ class DefaultTask {
 
     public void setStage(TaskStage stage) {
         this.stage = stage;
+    }
+
+    public TaskStage getStage() {
+        return stage;
     }
 
     @Override
