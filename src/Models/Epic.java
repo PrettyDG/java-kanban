@@ -16,4 +16,17 @@ public class Epic extends DefaultTask {
     public ArrayList<Integer> getAllSubtasksID() {
         return SubtasksID;
     }
+
+    public void deleteSubtaskID(int id) {
+        for (int i = 0; i < SubtasksID.size(); i++){
+            if (SubtasksID.get(i)==id){
+                SubtasksID.remove(i);
+                return;
+            }
+        }
+    }
+
+    public void clearSubtasks() {
+        SubtasksID.clear();
+    }
 }
