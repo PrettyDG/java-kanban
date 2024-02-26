@@ -2,7 +2,7 @@ package Models;
 
 import Utils.TaskStage;
 
-public class DefaultTask {
+public class DefaultTask implements Task {
     private String taskName;
     private String description;
     private TaskStage stage;
@@ -28,11 +28,15 @@ public class DefaultTask {
 
     @Override
     public String toString() {
-        return getClass().toString() +
+        return getClass().getName() +
                 " taskName='" + taskName + '\'' +
                 ", description='" + description + '\'' +
                 ", stage=" + stage +
                 ", id=" + id +
                 '}';
+    }
+
+    public int getId() {
+        return id;
     }
 }

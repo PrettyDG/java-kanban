@@ -2,7 +2,7 @@ package Models;
 
 import java.util.ArrayList;
 
-public class Epic extends DefaultTask {
+public class Epic extends DefaultTask implements Task {
     private ArrayList<Integer> SubtasksID = new ArrayList<>();
 
     public Epic(String taskName, String description) {
