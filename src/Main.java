@@ -50,6 +50,7 @@ public class Main {
             InMemoryTaskManager.getDefaultTaskByID(0);
         }
         InMemoryTaskManager.getEpicTaskByID(5);
+        InMemoryTaskManager.getEpicTaskByID(0);
         printAllTasks(InMemoryTaskManager);
     }
 
