@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager{
         if(task == null){
             return;
         }
-        if (viewHistory.size()>10){
+        if (viewHistory.size()>9){
             viewHistory.removeFirst();
         }
         viewHistory.add(task);

@@ -45,8 +45,7 @@ public class Main {
         InMemoryTaskManager.deleteDefaultTaskByID(1);
         InMemoryTaskManager.deleteEpicTask(2);
 
-        InMemoryTaskManager.getEpicTaskByID(5);
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 20; i++) {
             InMemoryTaskManager.getDefaultTaskByID(0);
         }
         InMemoryTaskManager.getEpicTaskByID(5);
