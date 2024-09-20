@@ -9,48 +9,48 @@ import utils.TaskStage;
 public class Main {
     public static void main(String[] args) {
 
-        TaskManager InMemoryTaskManager = Managers.getDefault();
+        TaskManager inMemoryTaskManager = Managers.getDefault();
 
         DefaultTask defaultTask1 = new DefaultTask("Уборка", "Уборка в комнате");
         defaultTask1.setStage(TaskStage.NEW);
-        InMemoryTaskManager.createDefaultTask(defaultTask1);
+        inMemoryTaskManager.createDefaultTask(defaultTask1);
 
         DefaultTask defaultTask2 = new DefaultTask("Готовка", "Приготовить ужин");
         defaultTask2.setStage(TaskStage.NEW);
-        InMemoryTaskManager.createDefaultTask(defaultTask2);
+        inMemoryTaskManager.createDefaultTask(defaultTask2);
 
 
         Epic epic1 = new Epic("Переезд", "Переезд в другой город");
-        InMemoryTaskManager.createEpicTask(epic1);
+        inMemoryTaskManager.createEpicTask(epic1);
         Subtask subtask1 = new Subtask("Сбор вещей", "Собрать вещи по коробкам");
         subtask1.setStage(TaskStage.NEW);
-        InMemoryTaskManager.createSubtask(subtask1, epic1);
+        inMemoryTaskManager.createSubtask(subtask1, epic1);
         Subtask subtask2 = new Subtask("Поиск билетов", "Выбрать билеты в другой город");
         subtask2.setStage(TaskStage.IN_PROGRESS);
-        InMemoryTaskManager.createSubtask(subtask2, epic1);
+        inMemoryTaskManager.createSubtask(subtask2, epic1);
         Subtask subtask3 = new Subtask("Выбор жилья", "Необходимо выбрать новое жильё");
         subtask3.setStage(TaskStage.IN_PROGRESS);
-        InMemoryTaskManager.createSubtask(subtask3, epic1);
+        inMemoryTaskManager.createSubtask(subtask3, epic1);
         subtask3.setStage(TaskStage.DONE);
-        InMemoryTaskManager.updateSubtask(5, subtask3, epic1);
+        inMemoryTaskManager.updateSubtask(5, subtask3, epic1);
 
 
         Epic epic2 = new Epic("Завести домаш.животное", "Выбор и покупка домашнего животного");
-        InMemoryTaskManager.createEpicTask(epic2);
+        inMemoryTaskManager.createEpicTask(epic2);
 
-        InMemoryTaskManager.getEpicTaskByID(3);
-        InMemoryTaskManager.getEpicTaskByID(6);
-        InMemoryTaskManager.getEpicTaskByID(3);
+        inMemoryTaskManager.getEpicTaskByID(3);
+        inMemoryTaskManager.getEpicTaskByID(6);
+        inMemoryTaskManager.getEpicTaskByID(3);
 
-        printAllTasks(InMemoryTaskManager);
+        printAllTasks(inMemoryTaskManager);
 
-        InMemoryTaskManager.deleteDefaultTaskByID(1);
+        inMemoryTaskManager.deleteDefaultTaskByID(1);
 
-        printAllTasks(InMemoryTaskManager);
+        printAllTasks(inMemoryTaskManager);
 
-        InMemoryTaskManager.deleteEpicTask(2);
+        inMemoryTaskManager.deleteEpicTask(2);
 
-        printAllTasks(InMemoryTaskManager);
+        printAllTasks(inMemoryTaskManager);
     }
 
     private static void printAllTasks(TaskManager manager) {
