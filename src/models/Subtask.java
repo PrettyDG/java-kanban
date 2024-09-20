@@ -1,4 +1,4 @@
-package Models;
+package models;
 
 public class Subtask extends DefaultTask implements Task{
     public int epicID;

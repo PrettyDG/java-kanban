@@ -1,18 +1,14 @@
-package Tests;
+package tests;
 
-import Controllers.*;
-import Models.DefaultTask;
-import Models.Epic;
-import Models.Subtask;
-import Models.Task;
-import Utils.TaskStage;
-import com.sun.tools.javac.Main;
-import org.junit.jupiter.api.AfterAll;
+import controllers.*;
+import models.DefaultTask;
+import models.Epic;
+import models.Subtask;
+import models.Task;
+import utils.TaskStage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.AccessFlag;
 
 
 public class InMemoryTaskManagerTest {

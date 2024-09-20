@@ -1,6 +1,6 @@
-package Controllers;
+package controllers;
 
-import Models.Task;
+import models.Task;
 
 public class Node {
     Task task;

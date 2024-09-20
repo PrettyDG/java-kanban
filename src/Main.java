@@ -1,12 +1,10 @@
-import Controllers.InMemoryHistoryManager;
-import Controllers.InMemoryTaskManager;
-import Controllers.Managers;
-import Controllers.TaskManager;
-import Models.DefaultTask;
-import Models.Epic;
-import Models.Subtask;
-import Models.Task;
-import Utils.TaskStage;
+import controllers.Managers;
+import controllers.TaskManager;
+import models.DefaultTask;
+import models.Epic;
+import models.Subtask;
+import models.Task;
+import utils.TaskStage;
 
 public class Main {
     public static void main(String[] args) {

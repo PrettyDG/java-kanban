@@ -1,7 +1,7 @@
-package Controllers;
+package controllers;
 
-import Utils.*;
-import Models.*;
+import utils.*;
+import models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
