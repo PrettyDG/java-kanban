@@ -18,8 +18,8 @@ public class Epic extends DefaultTask implements Task {
     }
 
     public void deleteSubtaskID(int id) {
-        for (int i = 0; i < SubtasksID.size(); i++){
-            if (SubtasksID.get(i)==id){
+        for (int i = 0; i < SubtasksID.size(); i++) {
+            if (SubtasksID.get(i) == id) {
                 SubtasksID.remove(i);
                 return;
             }

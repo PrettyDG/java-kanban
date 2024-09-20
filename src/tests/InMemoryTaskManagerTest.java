@@ -20,7 +20,7 @@ public class InMemoryTaskManagerTest {
     static Subtask subtask1;
 
     @BeforeAll
-    public static void beforeAll(){
+    public static void beforeAll() {
         defaultTask1 = new DefaultTask("Task1", "Task1 description");
         defaultTask1.setStage(TaskStage.NEW);
         inMemoryTaskManager.createDefaultTask(defaultTask1);
@@ -49,7 +49,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void subtaskCantBeEpicForHimself(){
+    public void subtaskCantBeEpicForHimself() {
         Subtask subtask1 = new Subtask("Subtask1", "Subtask1 description");
         subtask1.setStage(TaskStage.NEW);
         // inMemoryTaskManager.createSubtask(subtask1, subtask1);

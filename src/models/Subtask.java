@@ -1,6 +1,7 @@
 package models;
 
-public class Subtask extends DefaultTask implements Task{
+public class Subtask extends DefaultTask implements Task {
+
     public int epicID;
 
     public Subtask(String taskName, String description) {
