@@ -10,7 +10,6 @@ import Utils.TaskStage;
 
 public class Main {
     public static void main(String[] args) {
-        // InMemoryTaskManager InMemoryTaskManager = new InMemoryTaskManager();
 
         TaskManager InMemoryTaskManager = Managers.getDefault();
 
@@ -31,25 +30,28 @@ public class Main {
         Subtask subtask2 = new Subtask("Поиск билетов", "Выбрать билеты в другой город");
         subtask2.setStage(TaskStage.IN_PROGRESS);
         InMemoryTaskManager.createSubtask(subtask2, epic1);
+        Subtask subtask3 = new Subtask("Выбор жилья", "Необходимо выбрать новое жильё");
+        subtask3.setStage(TaskStage.IN_PROGRESS);
+        InMemoryTaskManager.createSubtask(subtask3, epic1);
+        subtask3.setStage(TaskStage.DONE);
+        InMemoryTaskManager.updateSubtask(5, subtask3, epic1);
 
 
         Epic epic2 = new Epic("Завести домаш.животное", "Выбор и покупка домашнего животного");
         InMemoryTaskManager.createEpicTask(epic2);
-        Subtask subtask3 = new Subtask("Выбор породы", "Изучение особенностей пород");
-        subtask3.setStage(TaskStage.IN_PROGRESS);
-        InMemoryTaskManager.createSubtask(subtask3, epic2);
 
-        subtask3.setStage(TaskStage.DONE);
-        InMemoryTaskManager.updateSubtask(6, subtask3, epic2);
+        InMemoryTaskManager.getEpicTaskByID(3);
+        InMemoryTaskManager.getEpicTaskByID(6);
+        InMemoryTaskManager.getEpicTaskByID(3);
+
+        printAllTasks(InMemoryTaskManager);
 
         InMemoryTaskManager.deleteDefaultTaskByID(1);
+
+        printAllTasks(InMemoryTaskManager);
+
         InMemoryTaskManager.deleteEpicTask(2);
 
-        for (int i = 0; i < 20; i++) {
-            InMemoryTaskManager.getDefaultTaskByID(0);
-        }
-        InMemoryTaskManager.getEpicTaskByID(5);
-        InMemoryTaskManager.getEpicTaskByID(0);
         printAllTasks(InMemoryTaskManager);
     }
 
