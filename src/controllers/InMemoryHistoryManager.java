@@ -18,13 +18,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-
-        for (Integer key : tasksAndId.keySet()) {
-            if (task.getId() == key) {
-                remove(tasksAndId.get(key));
-                tasksAndId.remove(key);
-                break;
-            }
+        if (tasksAndId.containsKey(task.getId())) {
+            remove(task.getId());
+            tasksAndId.remove(task.getId());
         }
 
         Node newNode = new Node(task);
@@ -32,36 +28,33 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         if (head == null) {
             head = newNode;
-            tail = newNode;
         } else {
             tail.next = newNode;
             newNode.prev = tail;
-            tail = newNode;
         }
+        tail = newNode;
     }
 
     @Override
-    public void remove(Node nodeToRemove) {
-        Node current = head;
+    public void remove(int id) {
+        Node current = tasksAndId.get(id);
+        tasksAndId.remove(id);
+        if (current == null) {
+            return;
+        }
 
-        while (current != null) {
-            if (current == nodeToRemove) {
-                if (current == head) {
-                    head = current.next;
-                    if (head != null) {
-                        head.prev = null;
-                    }
-                } else {
-                    if (current.next != null) {
-                        current.next.prev = current.prev;
-                    }
-                    if (current.prev != null) {
-                        current.prev.next = current.next;
-                    }
-                }
-                return;
+        if (current == head) {
+            head = current.next;
+            if (head != null) {
+                head.prev = null;
             }
-            current = current.next;
+        } else {
+            if (current.next != null) {
+                current.next.prev = current.prev;
+            }
+            if (current.prev != null) {
+                current.prev.next = current.next;
+            }
         }
     }
 
@@ -71,17 +64,22 @@ public class InMemoryHistoryManager implements HistoryManager {
         ArrayList<Task> tasks = new ArrayList<>();
         Node current = head;
 
-
-        if (head != null) {
-            while (head.prev != null) {
-                current = head.prev;
-                head.prev = head.prev.prev;
-            }
-            while (current != null) {
-                tasks.add(current.task);
-                current = current.next;
-            }
+        while (current != null) {
+            tasks.add(current.task);
+            current = current.next;
         }
         return tasks;
+    }
+}
+
+class Node {
+    Task task;
+    Node next;
+    Node prev;
+
+    public Node(Task task) {
+        this.task = task;
+        this.next = null;
+        this.prev = null;
     }
 }

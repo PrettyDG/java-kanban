@@ -38,17 +38,20 @@ public class Main {
         Epic epic2 = new Epic("Завести домаш.животное", "Выбор и покупка домашнего животного");
         inMemoryTaskManager.createEpicTask(epic2);
 
-        inMemoryTaskManager.getEpicTaskByID(3);
+        inMemoryTaskManager.getDefaultTaskByID(1);
+        inMemoryTaskManager.getEpicTaskByID(2);
         inMemoryTaskManager.getEpicTaskByID(6);
-        inMemoryTaskManager.getEpicTaskByID(3);
+
 
         printAllTasks(inMemoryTaskManager);
 
+        inMemoryTaskManager.getDefaultTaskByID(1);
         inMemoryTaskManager.deleteDefaultTaskByID(1);
 
         printAllTasks(inMemoryTaskManager);
 
         inMemoryTaskManager.deleteEpicTask(2);
+        inMemoryTaskManager.deleteAllDefaultTasks();
 
         printAllTasks(inMemoryTaskManager);
     }
