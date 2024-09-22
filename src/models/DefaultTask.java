@@ -1,6 +1,6 @@
-package Models;
+package models;
 
-import Utils.TaskStage;
+import utils.TaskStage;
 
 public class DefaultTask implements Task {
     private String taskName;

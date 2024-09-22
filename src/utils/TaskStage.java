@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 public enum TaskStage {
     NEW,

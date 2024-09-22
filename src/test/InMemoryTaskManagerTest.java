@@ -1,18 +1,14 @@
-package Tests;
+package test;
 
-import Controllers.*;
-import Models.DefaultTask;
-import Models.Epic;
-import Models.Subtask;
-import Models.Task;
-import Utils.TaskStage;
-import com.sun.tools.javac.Main;
-import org.junit.jupiter.api.AfterAll;
+import controllers.*;
+import models.DefaultTask;
+import models.Epic;
+import models.Subtask;
+import models.Task;
+import utils.TaskStage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.AccessFlag;
 
 
 public class InMemoryTaskManagerTest {
@@ -24,7 +20,7 @@ public class InMemoryTaskManagerTest {
     static Subtask subtask1;
 
     @BeforeAll
-    public static void beforeAll(){
+    public static void beforeAll() {
         defaultTask1 = new DefaultTask("Task1", "Task1 description");
         defaultTask1.setStage(TaskStage.NEW);
         inMemoryTaskManager.createDefaultTask(defaultTask1);
@@ -53,7 +49,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void subtaskCantBeEpicForHimself(){
+    public void subtaskCantBeEpicForHimself() {
         Subtask subtask1 = new Subtask("Subtask1", "Subtask1 description");
         subtask1.setStage(TaskStage.NEW);
         // inMemoryTaskManager.createSubtask(subtask1, subtask1);

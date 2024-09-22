@@ -1,32 +1,32 @@
-package Models;
+package models;
 
 import java.util.ArrayList;
 
 public class Epic extends DefaultTask implements Task {
-    private ArrayList<Integer> SubtasksID = new ArrayList<>();
+    private ArrayList<Integer> subtasksID = new ArrayList<>();
 
     public Epic(String taskName, String description) {
         super(taskName, description);
     }
 
     public void setSubtasksID(int id) {
-        SubtasksID.add(id);
+        subtasksID.add(id);
     }
 
     public ArrayList<Integer> getAllSubtasksID() {
-        return SubtasksID;
+        return subtasksID;
     }
 
     public void deleteSubtaskID(int id) {
-        for (int i = 0; i < SubtasksID.size(); i++){
-            if (SubtasksID.get(i)==id){
-                SubtasksID.remove(i);
+        for (int i = 0; i < subtasksID.size(); i++) {
+            if (subtasksID.get(i) == id) {
+                subtasksID.remove(i);
                 return;
             }
         }
     }
 
     public void clearSubtasks() {
-        SubtasksID.clear();
+        subtasksID.clear();
     }
 }
