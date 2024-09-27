@@ -11,4 +11,7 @@ public interface Task {
 
     void setId(int id);
 
+    String type = null;
+
+    String getType();
 }

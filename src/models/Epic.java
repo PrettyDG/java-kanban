@@ -1,5 +1,7 @@
 package models;
 
+import utils.TaskStage;
+
 import java.util.ArrayList;
 
 public class Epic extends DefaultTask implements Task {
@@ -7,6 +9,12 @@ public class Epic extends DefaultTask implements Task {
 
     public Epic(String taskName, String description) {
         super(taskName, description);
+        super.type = "EPIC";
+    }
+
+    public Epic(int id, String taskName, String description, TaskStage stage) {
+        super(id, taskName, description, stage);
+        super.type = "EPIC";
     }
 
     public void setSubtasksID(int id) {

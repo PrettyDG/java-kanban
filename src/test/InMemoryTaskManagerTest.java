@@ -20,7 +20,7 @@ public class InMemoryTaskManagerTest {
     static Subtask subtask1;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws ManagerSaveException {
         defaultTask1 = new DefaultTask("Task1", "Task1 description");
         defaultTask1.setStage(TaskStage.NEW);
         inMemoryTaskManager.createDefaultTask(defaultTask1);

@@ -6,12 +6,19 @@ public class DefaultTask implements Task {
     private String taskName;
     private String description;
     private TaskStage stage;
-    public int id;
-
+    public Integer id;
+    public String type = "TASK";
 
     public DefaultTask(String taskName, String description) {
         this.taskName = taskName;
         this.description = description;
+    }
+
+    public DefaultTask(int id, String taskName, String description, TaskStage stage) {
+        this.taskName = taskName;
+        this.description = description;
+        this.id = id;
+        this.stage = stage;
     }
 
     public void setId(int id) {
@@ -26,17 +33,27 @@ public class DefaultTask implements Task {
         return stage;
     }
 
+//    @Override
+//    public String toString() {
+//        return getClass().getName() +
+//                " taskName='" + taskName + '\'' +
+//                ", description='" + description + '\'' +
+//                ", stage=" + stage +
+//                ", id=" + id +
+//                '}';
+//    }
+
+
     @Override
     public String toString() {
-        return getClass().getName() +
-                " taskName='" + taskName + '\'' +
-                ", description='" + description + '\'' +
-                ", stage=" + stage +
-                ", id=" + id +
-                '}';
+        return id + "," + type + "," + taskName + "," + stage + "," + description;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getType() {
+        return type;
     }
 }

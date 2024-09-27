@@ -1,3 +1,5 @@
+import controllers.FileBackedTaskManager;
+import controllers.ManagerSaveException;
 import controllers.Managers;
 import controllers.TaskManager;
 import models.DefaultTask;
@@ -6,54 +8,62 @@ import models.Subtask;
 import models.Task;
 import utils.TaskStage;
 
-public class Main {
-    public static void main(String[] args) {
+import java.io.*;
 
-        TaskManager inMemoryTaskManager = Managers.getDefault();
+public class Main {
+    public static void main(String[] args) throws ManagerSaveException {
+
+        File file = new File("file.txt");
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        //       fileBackedTaskManager.loadFromFile(file);
 
         DefaultTask defaultTask1 = new DefaultTask("Уборка", "Уборка в комнате");
         defaultTask1.setStage(TaskStage.NEW);
-        inMemoryTaskManager.createDefaultTask(defaultTask1);
+        fileBackedTaskManager.createDefaultTask(defaultTask1);
 
         DefaultTask defaultTask2 = new DefaultTask("Готовка", "Приготовить ужин");
         defaultTask2.setStage(TaskStage.NEW);
-        inMemoryTaskManager.createDefaultTask(defaultTask2);
+        fileBackedTaskManager.createDefaultTask(defaultTask2);
 
 
         Epic epic1 = new Epic("Переезд", "Переезд в другой город");
-        inMemoryTaskManager.createEpicTask(epic1);
+        fileBackedTaskManager.createEpicTask(epic1);
         Subtask subtask1 = new Subtask("Сбор вещей", "Собрать вещи по коробкам");
         subtask1.setStage(TaskStage.NEW);
-        inMemoryTaskManager.createSubtask(subtask1, epic1);
+        fileBackedTaskManager.createSubtask(subtask1, epic1);
         Subtask subtask2 = new Subtask("Поиск билетов", "Выбрать билеты в другой город");
         subtask2.setStage(TaskStage.IN_PROGRESS);
-        inMemoryTaskManager.createSubtask(subtask2, epic1);
+        fileBackedTaskManager.createSubtask(subtask2, epic1);
         Subtask subtask3 = new Subtask("Выбор жилья", "Необходимо выбрать новое жильё");
         subtask3.setStage(TaskStage.IN_PROGRESS);
-        inMemoryTaskManager.createSubtask(subtask3, epic1);
+        fileBackedTaskManager.createSubtask(subtask3, epic1);
         subtask3.setStage(TaskStage.DONE);
-        inMemoryTaskManager.updateSubtask(5, subtask3, epic1);
+        fileBackedTaskManager.updateSubtask(5, subtask3, epic1);
 
 
         Epic epic2 = new Epic("Завести домаш.животное", "Выбор и покупка домашнего животного");
-        inMemoryTaskManager.createEpicTask(epic2);
+        fileBackedTaskManager.createEpicTask(epic2);
 
-        inMemoryTaskManager.getDefaultTaskByID(1);
-        inMemoryTaskManager.getEpicTaskByID(2);
-        inMemoryTaskManager.getEpicTaskByID(6);
+        fileBackedTaskManager.getDefaultTaskByID(1);
+        fileBackedTaskManager.getEpicTaskByID(2);
+        fileBackedTaskManager.getEpicTaskByID(6);
 
 
-        printAllTasks(inMemoryTaskManager);
+        printAllTasks(fileBackedTaskManager);
 
-        inMemoryTaskManager.getDefaultTaskByID(1);
-        inMemoryTaskManager.deleteDefaultTaskByID(1);
+        fileBackedTaskManager.getDefaultTaskByID(1);
+        fileBackedTaskManager.deleteDefaultTaskByID(1);
 
-        printAllTasks(inMemoryTaskManager);
+        printAllTasks(fileBackedTaskManager);
 
-        inMemoryTaskManager.deleteEpicTask(2);
-        inMemoryTaskManager.deleteAllDefaultTasks();
+        fileBackedTaskManager.deleteEpicTask(2);
+        fileBackedTaskManager.deleteAllDefaultTasks();
 
-        printAllTasks(inMemoryTaskManager);
+        DefaultTask defaultTask5 = new DefaultTask("Уборка", "Уборка в комнате");
+        defaultTask5.setStage(TaskStage.NEW);
+        fileBackedTaskManager.createDefaultTask(defaultTask5);
+
+        printAllTasks(fileBackedTaskManager);
     }
 
     private static void printAllTasks(TaskManager manager) {

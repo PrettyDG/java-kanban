@@ -1,0 +1,3 @@
+id,type,name,status,description,epic
+7,TASK,Уборка,NEW,Уборка в комнате
+6,EPIC,Завести домаш.животное,null,Выбор и покупка домашнего животного
