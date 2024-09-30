@@ -20,7 +20,7 @@ public class Subtask extends DefaultTask implements Task {
 
     @Override
     public String toString() {
-        return super.toString() + epicID;
+        return super.toString() + "," + epicID;
     }
 
     public void setEpicID(int epicID) {
