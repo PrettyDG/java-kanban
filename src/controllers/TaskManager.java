@@ -46,4 +46,6 @@ public interface TaskManager {
     Subtask getSubtaskByID(int id);
 
     ArrayList<Task> getHistory();
+
+    Task getTaskforUserByID(int id);
 }

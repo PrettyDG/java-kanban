@@ -1,5 +1,4 @@
 import controllers.*;
-import exceptions.ManagerSaveException;
 import models.DefaultTask;
 import models.Epic;
 import models.Subtask;
@@ -8,8 +7,6 @@ import utils.TaskStage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.io.*;
 
 
 public class InMemoryTaskManagerTest {
@@ -43,7 +40,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void historyCheck() {
-        inMemoryTaskManager.getDefaultTaskByID(defaultTask1.getId());
+        inMemoryTaskManager.getTaskforUserByID(defaultTask1.getId());
         Assertions.assertNotNull(inMemoryTaskManager.getHistory());
         Assertions.assertEquals(1, inMemoryTaskManager.getHistory().size());
     }
@@ -58,8 +55,8 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void createDifferentTaskAndFindThemByIDs() {
-        Epic currentEpic = inMemoryTaskManager.getEpicTaskByID(4);
-        Subtask currentSubtask = inMemoryTaskManager.getSubtaskByID(5);
+        Epic currentEpic = inMemoryTaskManager.getEpicTaskByID(1);
+        Subtask currentSubtask = inMemoryTaskManager.getSubtaskByID(2);
 
         Assertions.assertNotNull(currentEpic);
         Assertions.assertNotNull(currentSubtask);
@@ -69,11 +66,11 @@ public class InMemoryTaskManagerTest {
     public void updateTasks() {
         defaultTask1.setStage(TaskStage.IN_PROGRESS);
         inMemoryTaskManager.updateDefaultTask(0);
-        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getDefaultTaskByID(3).getStage());
+        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getDefaultTaskByID(0).getStage());
 
         subtask1.setStage(TaskStage.IN_PROGRESS);
         inMemoryTaskManager.updateSubtask(2, subtask1, epic1);
-        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getEpicTaskByID(4).getStage());
-        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getSubtaskByID(5).getStage());
+        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getEpicTaskByID(1).getStage());
+        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getSubtaskByID(2).getStage());
     }
 }

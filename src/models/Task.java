@@ -2,6 +2,8 @@ package models;
 
 import utils.TaskStage;
 
+import java.time.LocalDateTime;
+
 public interface Task {
     int getId();
 
@@ -14,4 +16,8 @@ public interface Task {
     String type = null;
 
     String getType();
+
+    LocalDateTime getStartTime();
+
+    LocalDateTime getEndTime();
 }
