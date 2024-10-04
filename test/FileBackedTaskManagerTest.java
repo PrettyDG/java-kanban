@@ -3,6 +3,7 @@ import exceptions.ManagerSaveException;
 import models.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.TaskStage;
 
@@ -19,7 +20,8 @@ public class FileBackedTaskManagerTest {
     static Epic epic1;
     static Subtask subtask1;
     static File testFile = new File("src/resources/test_file.txt");
-    static FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(testFile);
+    FileBackedTaskManager fileBackedTaskManager;
+    InMemoryTaskManager inMemoryTaskManager;
 
     @BeforeAll
     public static void beforeAll() throws IOException {
@@ -34,9 +36,15 @@ public class FileBackedTaskManagerTest {
         }
     }
 
+    @BeforeEach
+    public void setUp() {
+        inMemoryTaskManager = new InMemoryTaskManager();
+        fileBackedTaskManager = new FileBackedTaskManager(testFile);
+    }
+
 
     @Test
-    public void loadAndDeleteFromFile() throws ManagerSaveException {
+    public void loadAndDeleteFromFile() {
         fileBackedTaskManager = FileBackedTaskManager.loadFromFile(testFile);
         Assertions.assertNotNull(fileBackedTaskManager.getAllTasks());
 
@@ -46,7 +54,6 @@ public class FileBackedTaskManagerTest {
         fileBackedTaskManager.deleteAllDefaultTasks();
         fileBackedTaskManager.deleteAllSubtasksForEpic(fileBackedTaskManager.getEpicTaskByID(1));
         fileBackedTaskManager.deleteAllEpics();
-        fileBackedTaskManager.clearEverything();
     }
 
     @Test
@@ -61,7 +68,6 @@ public class FileBackedTaskManagerTest {
         Assertions.assertNull(fileBackedTaskManager.getDefaultTaskByID(1));
 
         fileBackedTaskManager.deleteAllDefaultTasks();
-        fileBackedTaskManager.clearEverything();
     }
 
     @Test
@@ -92,8 +98,6 @@ public class FileBackedTaskManagerTest {
         fileBackedTaskManager.updateSubtask(1, subtask1, epic1);
         fileBackedTaskManager.updateSubtask(2, subtask2, epic1);
         System.out.println(epic1); // Подзадачи со статусами IN_PROGRESS
-
-        fileBackedTaskManager.clearEverything();
     }
 
     @Test

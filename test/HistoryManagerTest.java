@@ -46,7 +46,5 @@ public class HistoryManagerTest {
 
         fileBackedTaskManager.deleteAllDefaultTasks();
         System.out.println(fileBackedTaskManager.getHistory()); // История должна содержать 2 задачи и удалить Default
-
-        fileBackedTaskManager.clearEverything();
     }
 }

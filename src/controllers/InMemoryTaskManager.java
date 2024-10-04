@@ -1,21 +1,26 @@
 package controllers;
 
-import exceptions.ManagerSaveException;
 import models.DefaultTask;
 import models.Epic;
 import models.Subtask;
 import models.Task;
 import utils.TaskStage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    private static int idNumberForTasks = 0;
+    private int idNumberForTasks = 0;
     private final HashMap<Integer, DefaultTask> defaultTasksHash = new HashMap<>();
     private final HashMap<Integer, Epic> epicTasksHash = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskHash = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
+    protected final Comparator<Task> timeComparator = new Comparator<Task>() {
+        @Override
+        public int compare(Task o1, Task o2) {
+            return o1.getStartTime().compareTo(o2.getStartTime().minusSeconds(1));
+        }
+    };
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(timeComparator);
 
 
     public ArrayList<Task> getAllTasks() {
@@ -26,18 +31,12 @@ public class InMemoryTaskManager implements TaskManager {
         return allTasks;
     }
 
-    public void clearEverything() {
-        defaultTasksHash.clear();
-        epicTasksHash.clear();
-        subtaskHash.clear();
-        idNumberForTasks = 0;
-    }
-
     @Override
-    public DefaultTask createDefaultTask(DefaultTask currentTask) throws ManagerSaveException {
+    public DefaultTask createDefaultTask(DefaultTask currentTask) {
         defaultTasksHash.put(idNumberForTasks, currentTask);
         currentTask.setId(idNumberForTasks);
         idNumberForTasks++;
+        prioritizedTasks.add(currentTask);
         return currentTask;
     }
 
@@ -49,17 +48,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public DefaultTask deleteDefaultTaskByID(int id) throws ManagerSaveException {
+    public DefaultTask deleteDefaultTaskByID(int id) {
         DefaultTask currentTask = defaultTasksHash.get(id);
+        prioritizedTasks.remove(currentTask);
         defaultTasksHash.remove(id);
         history.remove(id);
         return currentTask;
     }
 
     @Override
-    public void deleteAllDefaultTasks() throws ManagerSaveException {
-        defaultTasksHash.keySet().stream()
-                .forEach(history::remove);
+    public void deleteAllDefaultTasks() {
+        defaultTasksHash.keySet()
+                .forEach(taskID -> {
+                    prioritizedTasks.remove(getDefaultTaskByID(taskID));
+                    history.remove(taskID);
+                });
         defaultTasksHash.clear();
     }
 
@@ -85,7 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public Epic createEpicTask(Epic currentTask) throws ManagerSaveException {
+    public Epic createEpicTask(Epic currentTask) {
         epicTasksHash.put(idNumberForTasks, currentTask);
         currentTask.setId(idNumberForTasks);
         idNumberForTasks++;
@@ -129,12 +132,16 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic deleteEpicTask(int id) throws ManagerSaveException {
+    public Epic deleteEpicTask(int id) {
         Epic currentTask = epicTasksHash.get(id);
+        prioritizedTasks.remove(currentTask);
         ArrayList<Integer> subtasksIDs = currentTask.getAllSubtasksID();
 
         currentTask.getAllSubtasksID().stream()
-                .forEach(this::deleteSubtaskByID);
+                .forEach(subID -> {
+                    prioritizedTasks.remove(getSubtaskByID(subID));
+                    history.remove(subID);
+                });
 
         deleteSubtaskByID(subtasksIDs.get(0));
 
@@ -144,13 +151,19 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllEpics() throws ManagerSaveException {
+    public void deleteAllEpics() {
 
         epicTasksHash.keySet().stream()
-                .forEach(history::remove);
+                .forEach(epicID -> {
+                    prioritizedTasks.remove(getEpicTaskByID(epicID));
+                    history.remove(epicID);
+                });
 
         subtaskHash.keySet().stream()
-                .forEach(history::remove);
+                .forEach(subID -> {
+                    prioritizedTasks.remove(getSubtaskByID(subID));
+                    history.remove(subID);
+                });
 
         epicTasksHash.clear();
         subtaskHash.clear();
@@ -180,12 +193,13 @@ public class InMemoryTaskManager implements TaskManager {
 
 
     @Override
-    public Subtask createSubtask(Subtask currentSubtask, Epic currentEpic) throws ManagerSaveException {
+    public Subtask createSubtask(Subtask currentSubtask, Epic currentEpic) {
         subtaskHash.put(idNumberForTasks, currentSubtask);
         currentSubtask.setId(idNumberForTasks);
         currentSubtask.setEpicID(currentEpic.id);
-        currentEpic.setSubtasksID(idNumberForTasks);
+        currentEpic.setSubtasksID(currentSubtask.getId());
         idNumberForTasks++;
+        prioritizedTasks.add(currentSubtask);
         updateEpicTask(currentEpic.id);
         return currentSubtask;
     }
@@ -201,8 +215,9 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask deleteSubtaskByID(int id) throws ManagerSaveException {
+    public Subtask deleteSubtaskByID(int id) {
         Subtask beforeSubtask = subtaskHash.get(id);
+        prioritizedTasks.remove(beforeSubtask);
         Epic currentEpic = epicTasksHash.get(beforeSubtask.epicID);
         history.remove(id);
         subtaskHash.remove(id);
@@ -212,9 +227,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllSubtasksForEpic(Epic currentEpic) throws ManagerSaveException {
+    public void deleteAllSubtasksForEpic(Epic currentEpic) {
         currentEpic.getAllSubtasksID().stream()
                 .forEach(id -> {
+                    prioritizedTasks.remove(getSubtaskByID(id));
                     history.remove(id);
                     subtaskHash.remove(id);
                 });

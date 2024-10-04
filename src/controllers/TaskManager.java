@@ -1,6 +1,5 @@
 package controllers;
 
-import exceptions.ManagerSaveException;
 import models.DefaultTask;
 import models.Epic;
 import models.Subtask;
@@ -9,23 +8,23 @@ import models.Task;
 import java.util.ArrayList;
 
 public interface TaskManager {
-    DefaultTask createDefaultTask(DefaultTask currentTask) throws ManagerSaveException;
+    DefaultTask createDefaultTask(DefaultTask currentTask);
 
     DefaultTask updateDefaultTask(int id);
 
-    DefaultTask deleteDefaultTaskByID(int id) throws ManagerSaveException;
+    DefaultTask deleteDefaultTaskByID(int id);
 
-    void deleteAllDefaultTasks() throws ManagerSaveException;
+    void deleteAllDefaultTasks();
 
     ArrayList<DefaultTask> getAllDefaultTasks();
 
     DefaultTask getDefaultTaskByID(int id);
 
-    Epic createEpicTask(Epic currentTask) throws ManagerSaveException;
+    Epic createEpicTask(Epic currentTask);
 
-    Epic deleteEpicTask(int id) throws ManagerSaveException;
+    Epic deleteEpicTask(int id);
 
-    void deleteAllEpics() throws ManagerSaveException;
+    void deleteAllEpics();
 
     ArrayList<Epic> getEpicTasks();
 
@@ -33,13 +32,13 @@ public interface TaskManager {
 
     ArrayList<Subtask> getAllSubtasksByEpicID(int id);
 
-    Subtask createSubtask(Subtask currentSubtask, Epic currentEpic) throws ManagerSaveException;
+    Subtask createSubtask(Subtask currentSubtask, Epic currentEpic);
 
     Subtask updateSubtask(int id, Subtask newSubTask, Epic currentEpic);
 
-    Subtask deleteSubtaskByID(int id) throws ManagerSaveException;
+    Subtask deleteSubtaskByID(int id);
 
-    void deleteAllSubtasksForEpic(Epic currentEpic) throws ManagerSaveException;
+    void deleteAllSubtasksForEpic(Epic currentEpic);
 
     ArrayList<Subtask> getAllSubtasks();
 

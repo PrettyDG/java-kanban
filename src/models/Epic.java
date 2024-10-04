@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class Epic extends DefaultTask implements Task {
     private final ArrayList<Integer> subtasksID = new ArrayList<>();
+    LocalDateTime endTime;
 
     public Epic(String taskName, String description) {
         super(taskName, description);
@@ -33,27 +34,38 @@ public class Epic extends DefaultTask implements Task {
 
     public LocalDateTime getEndTime(FileBackedTaskManager fileBackedTaskManager) {
         updateTime(fileBackedTaskManager);
-        return getEndTime();
+        return endTime;
     }
 
     public void updateTime(FileBackedTaskManager fileBackedTaskManager) {
         LocalDateTime minTime = LocalDateTime.of(2570, 10, 10, 10, 10);
         LocalDateTime maxTime = LocalDateTime.of(1970, 10, 10, 10, 10);
-
+        Duration duration = Duration.ofMinutes(0);
         try {
-            for (Integer i : subtasksID) {
-                if (fileBackedTaskManager.getSubtaskByID(i).getStartTime().isBefore(minTime)) {
-                    minTime = fileBackedTaskManager.getSubtaskByID(i).getStartTime();
-                }
-                if (fileBackedTaskManager.getSubtaskByID(i).getEndTime().isAfter(maxTime)) {
-                    maxTime = fileBackedTaskManager.getSubtaskByID(i).getEndTime();
-                }
-            }
+            minTime = fileBackedTaskManager.getAllSubtasksByEpicID(id).stream()
+                    .map(Subtask::getStartTime)
+                    .min(LocalDateTime::compareTo)
+                    .orElse(minTime);
+
+            maxTime = fileBackedTaskManager.getAllSubtasksByEpicID(id).stream()
+                    .map(Subtask::getEndTime)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(maxTime);
+
+            duration = fileBackedTaskManager.getAllSubtasksByEpicID(id).stream()
+                    .map(Subtask::getDuration)
+                    .reduce(Duration.ofMinutes(0), Duration::plus);
+
             setStartTime(minTime);
-            setDuration(Duration.between(minTime, maxTime));
+            setDuration(duration);
+            setEndTime(maxTime);
         } catch (NullPointerException e) {
             System.out.println("Subtask == null");
         }
+    }
+
+    public void setEndTime(LocalDateTime localDateTime) {
+        endTime = localDateTime;
     }
 
     public void setSubtasksID(int id) {

@@ -11,9 +11,9 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -50,18 +50,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    public TreeSet<Task> getPrioritizedTasks() {
-        Comparator<Task> timeComparator = new Comparator<Task>() {
-            @Override
-            public int compare(Task o1, Task o2) {
-                return o1.getStartTime().compareTo(o2.getStartTime().minusSeconds(1));
-            }
-        };
-
-        TreeSet<Task> taskTreeSet = new TreeSet<>(timeComparator);
-        taskTreeSet.addAll(getAllDefaultTasks());
-        taskTreeSet.addAll(getAllSubtasks());
-        return taskTreeSet;
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     @Override
