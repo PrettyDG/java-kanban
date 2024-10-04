@@ -26,11 +26,11 @@ public class Subtask extends DefaultTask implements Task {
         return super.toString() + "," + epicID;
     }
 
-    public void setEpicID(int epicID) {
-        this.epicID = epicID;
-    }
-
     public int getEpicID() {
         return epicID;
+    }
+
+    public void setEpicID(int epicID) {
+        this.epicID = epicID;
     }
 }

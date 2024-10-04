@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
+    private static int idNumberForTasks = 0;
     private final HashMap<Integer, DefaultTask> defaultTasksHash = new HashMap<>();
     private final HashMap<Integer, Epic> epicTasksHash = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskHash = new HashMap<>();
-    private static int idNumberForTasks = 0;
     private final HistoryManager history = Managers.getDefaultHistory();
 
 
@@ -71,7 +71,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public Task getTaskforUserByID(int id) {
-        for (Task task : getAllTasks()){
+        for (Task task : getAllTasks()) {
             if (task.getId() == id) {
                 history.add(task);
                 return task;

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends DefaultTask implements Task {
-    private ArrayList<Integer> subtasksID = new ArrayList<>();
+    private final ArrayList<Integer> subtasksID = new ArrayList<>();
 
     public Epic(String taskName, String description) {
         super(taskName, description);
@@ -24,7 +24,7 @@ public class Epic extends DefaultTask implements Task {
 
     @Override
     public String toString() {
-        if(getEndTime()==null){
+        if (getEndTime() == null) {
             return getId() + "," + getType() + "," + getTaskName() + "," + getStage() + "," + getDescription();
         }
         return super.toString();

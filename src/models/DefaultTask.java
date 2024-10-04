@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DefaultTask implements Task {
-    private String taskName;
-    private String description;
-    private TaskStage stage;
     public Integer id;
     public String type = "TASK";
+    private final String taskName;
+    private final String description;
+    private TaskStage stage;
     private Duration duration;
     private LocalDateTime startTime;
 
@@ -38,22 +38,25 @@ public class DefaultTask implements Task {
     }
 
     public LocalDateTime getEndTime() {
-        if (startTime == null || duration == null){
+        if (startTime == null || duration == null) {
             return null;
         }
         return startTime.plus(duration);
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public TaskStage getStage() {
+        return stage;
     }
 
     public void setStage(TaskStage stage) {
         this.stage = stage;
     }
 
-    public TaskStage getStage() {
-        return stage;
+    @Override
+    public String toString() {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
+        return id + "," + type + "," + taskName + "," + stage + "," + description + ","
+                + startTime.format(dateTimeFormatter) + "," + duration.toMinutes();
     }
 
 //    @Override
@@ -66,36 +69,32 @@ public class DefaultTask implements Task {
 //                '}';
 //    }
 
-
-    @Override
-    public String toString() {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
-        return id + "," + type + "," + taskName + "," + stage + "," + description + ","
-                + startTime.format(dateTimeFormatter) + "," + duration.toMinutes();
-    }
-
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
     public Duration getDuration() {
         return duration;
     }
 
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public String getTaskName() {
