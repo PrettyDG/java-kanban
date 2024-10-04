@@ -2,16 +2,15 @@ package models;
 
 import utils.TaskStage;
 
-import javax.swing.text.DateFormatter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DefaultTask implements Task {
-    public Integer id;
-    public String type = "TASK";
     private final String taskName;
     private final String description;
+    public Integer id;
+    public String type = "TASK";
     private TaskStage stage;
     private Duration duration;
     private LocalDateTime startTime;
