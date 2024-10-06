@@ -1,15 +1,16 @@
-import controllers.*;
-import exceptions.ManagerSaveException;
+import controllers.Managers;
+import controllers.TaskManager;
 import models.DefaultTask;
 import models.Epic;
 import models.Subtask;
 import models.Task;
-import utils.TaskStage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import utils.TaskStage;
 
-import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 
 public class InMemoryTaskManagerTest {
@@ -21,15 +22,16 @@ public class InMemoryTaskManagerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        defaultTask1 = new DefaultTask("Task1", "Task1 description");
+        defaultTask1 = new DefaultTask(0, "Task1", "Task1 description"
+                , TaskStage.NEW, LocalDateTime.of(2024, 10, 4, 19, 0), Duration.ofMinutes(30));
         defaultTask1.setStage(TaskStage.NEW);
         inMemoryTaskManager.createDefaultTask(defaultTask1);
 
-        epic1 = new Epic("Epic1", "Epic1 description");
+        epic1 = new Epic(1, "Epic1", "Epic1 description", TaskStage.NEW);
         inMemoryTaskManager.createEpicTask(epic1);
 
-        subtask1 = new Subtask("Subtask1", "Subtask1 description");
-        subtask1.setStage(TaskStage.NEW);
+        subtask1 = new Subtask(1, "Subtask2", "Subtask2 description3"
+                , TaskStage.NEW, 0, LocalDateTime.now().minusHours(5), Duration.ofMinutes(30));
         inMemoryTaskManager.createSubtask(subtask1, epic1);
     }
 
@@ -43,7 +45,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void historyCheck() {
-        inMemoryTaskManager.getDefaultTaskByID(defaultTask1.getId());
+        inMemoryTaskManager.getTaskforUserByID(defaultTask1.getId());
         Assertions.assertNotNull(inMemoryTaskManager.getHistory());
         Assertions.assertEquals(1, inMemoryTaskManager.getHistory().size());
     }
@@ -58,8 +60,8 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void createDifferentTaskAndFindThemByIDs() {
-        Epic currentEpic = inMemoryTaskManager.getEpicTaskByID(4);
-        Subtask currentSubtask = inMemoryTaskManager.getSubtaskByID(5);
+        Epic currentEpic = inMemoryTaskManager.getEpicTaskByID(1);
+        Subtask currentSubtask = inMemoryTaskManager.getSubtaskByID(2);
 
         Assertions.assertNotNull(currentEpic);
         Assertions.assertNotNull(currentSubtask);
@@ -69,11 +71,11 @@ public class InMemoryTaskManagerTest {
     public void updateTasks() {
         defaultTask1.setStage(TaskStage.IN_PROGRESS);
         inMemoryTaskManager.updateDefaultTask(0);
-        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getDefaultTaskByID(3).getStage());
+        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getDefaultTaskByID(0).getStage());
 
         subtask1.setStage(TaskStage.IN_PROGRESS);
         inMemoryTaskManager.updateSubtask(2, subtask1, epic1);
-        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getEpicTaskByID(4).getStage());
-        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getSubtaskByID(5).getStage());
+        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getEpicTaskByID(1).getStage());
+        Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getSubtaskByID(2).getStage());
     }
 }

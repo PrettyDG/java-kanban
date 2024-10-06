@@ -1,15 +1,23 @@
 package controllers;
 
 import exceptions.ManagerSaveException;
-import models.*;
+import models.DefaultTask;
+import models.Epic;
+import models.Subtask;
+import models.Task;
 import utils.TaskStage;
 
 import java.io.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    private File file;
+    private final File file;
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -42,11 +50,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
     @Override
     public DefaultTask createDefaultTask(DefaultTask currentTask) {
-        super.createDefaultTask(currentTask);
-        save();
-        return currentTask;
+        if (!isTasksCrossing(currentTask)) {
+            super.createDefaultTask(currentTask);
+
+            save();
+            return currentTask;
+        } else {
+            System.out.println("Задача " + currentTask.toString() + " пересекается по времени с другой. Не была создана");
+            return null;
+        }
     }
 
     @Override
@@ -84,9 +102,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Subtask createSubtask(Subtask currentSubtask, Epic currentEpic) {
-        super.createSubtask(currentSubtask, currentEpic);
-        save();
-        return currentSubtask;
+        if (!isTasksCrossing(currentSubtask)) {
+            super.createSubtask(currentSubtask, currentEpic);
+            save();
+            return currentSubtask;
+        } else {
+            System.out.println("Задача " + currentSubtask.toString() + " пересекается по времени с другой. Не была создана");
+            return null;
+        }
     }
 
     @Override
@@ -104,7 +127,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (FileWriter fileWriter = new FileWriter(file, false)) {
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id,type,name,status,description,startTime,duration,epicID\n");
+
             for (Task task : getAllTasks()) {
                 try {
                     fileWriter.write(task.toString());
@@ -118,9 +142,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
+    public boolean isTasksCrossing(Task task) {
+        if (getPrioritizedTasks().isEmpty()) return false;
+        return getPrioritizedTasks().stream().anyMatch(task1 -> isCrossing(task1, task));
+    }
+
+    public boolean isCrossing(Task task1, Task task2) {
+        return task1.getStartTime().isBefore(task2.getEndTime()) && task1.getEndTime().isAfter(task2.getStartTime());
+    }
+
+
     public Integer getEpicIdFromString(String value) {
         String[] values = value.trim().split(",");
-        int epicID = Integer.parseInt(values[5]);
+        int epicID = Integer.parseInt(values[7]);
         return epicID;
     }
 
@@ -132,12 +166,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = values[2];
         TaskStage status = TaskStage.valueOf(values[3]);
         String description = values[4];
-        Integer epicID = values.length > 5 ? Integer.parseInt(values[5]) : null;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
+        LocalDateTime startTime = LocalDateTime.parse(values[5], timeFormatter);
+        Duration duration = Duration.ofMinutes(Long.parseLong(values[6]));
+        Integer epicID = values.length > 7 ? Integer.parseInt(values[7]) : null;
 
         try {
             switch (type) {
                 case ("TASK"):
-                    DefaultTask defaultTask = new DefaultTask(id, name, description, status);
+                    DefaultTask defaultTask = new DefaultTask(id, name, description, status, startTime, duration);
                     return defaultTask;
 
                 case ("EPIC"):
@@ -145,7 +182,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     return epic;
 
                 case ("SUBTASK"):
-                    Subtask subtask = new Subtask(id, name, description, status, epicID);
+                    Subtask subtask = new Subtask(id, name, description, status, epicID, startTime, duration);
                     return subtask;
             }
         } catch (NullPointerException exception) {

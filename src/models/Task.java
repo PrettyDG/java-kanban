@@ -2,16 +2,22 @@ package models;
 
 import utils.TaskStage;
 
+import java.time.LocalDateTime;
+
 public interface Task {
+    String type = null;
+
     int getId();
-
-    void setStage(TaskStage stage);
-
-    TaskStage getStage();
 
     void setId(int id);
 
-    String type = null;
+    TaskStage getStage();
+
+    void setStage(TaskStage stage);
 
     String getType();
+
+    LocalDateTime getStartTime();
+
+    LocalDateTime getEndTime();
 }

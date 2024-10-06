@@ -2,6 +2,9 @@ package models;
 
 import utils.TaskStage;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Subtask extends DefaultTask implements Task {
 
     public int epicID;
@@ -12,8 +15,8 @@ public class Subtask extends DefaultTask implements Task {
         super.type = "SUBTASK";
     }
 
-    public Subtask(int id, String taskName, String description, TaskStage stage, int epicID) {
-        super(id, taskName, description, stage);
+    public Subtask(int id, String taskName, String description, TaskStage stage, int epicID, LocalDateTime startTime, Duration duration) {
+        super(id, taskName, description, stage, startTime, duration);
         this.epicID = epicID;
         super.type = "SUBTASK";
     }
@@ -23,11 +26,11 @@ public class Subtask extends DefaultTask implements Task {
         return super.toString() + "," + epicID;
     }
 
-    public void setEpicID(int epicID) {
-        this.epicID = epicID;
-    }
-
     public int getEpicID() {
         return epicID;
+    }
+
+    public void setEpicID(int epicID) {
+        this.epicID = epicID;
     }
 }
