@@ -26,7 +26,7 @@ public class BaseHttpHandler {
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(string.getBytes());
         } catch (IOException e) {
-            System.out.println(e.toString());
+            System.out.println(e);
         }
     }
 

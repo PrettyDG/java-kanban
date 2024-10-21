@@ -10,7 +10,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     private static TaskManager taskManager;
 
     public HistoryHandler(TaskManager taskManager) {
-        this.taskManager = taskManager;
+        HistoryHandler.taskManager = taskManager;
     }
 
     @Override

@@ -13,7 +13,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
     private static TaskManager taskManager;
 
     public TasksHandler(TaskManager taskManager) {
-        this.taskManager = taskManager;
+        TasksHandler.taskManager = taskManager;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class TasksHandler extends BaseHttpHandler implements HttpHandler {
             defaultTask.setId(id);
             if (taskManager.updateDefaultTask(id, defaultTask) != null) {
                 exchange.sendResponseHeaders(201, 0);
-                writeToUser(exchange, "Задача создана - " + defaultTask.toString());
+                writeToUser(exchange, "Задача создана - " + defaultTask);
             } else {
                 exchange.sendResponseHeaders(406, 0);
                 writeToUser(exchange, "Ошибка 406, Задача пересекается с другой");

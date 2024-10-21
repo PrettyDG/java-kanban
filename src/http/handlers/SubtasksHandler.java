@@ -13,7 +13,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
     private static TaskManager taskManager;
 
     public SubtasksHandler(TaskManager taskManager) {
-        this.taskManager = taskManager;
+        SubtasksHandler.taskManager = taskManager;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
             Subtask subtask = gson.fromJson(bodyTask, Subtask.class);
             if (taskManager.updateSubtask(id, subtask, taskManager.getEpicTaskByID(subtask.getEpicID())) != null) {
                 exchange.sendResponseHeaders(201, 0);
-                writeToUser(exchange, "Задача создана - " + subtask.toString());
+                writeToUser(exchange, "Задача создана - " + subtask);
             } else {
                 exchange.sendResponseHeaders(406, 0);
                 writeToUser(exchange, "Ошибка 406, Задача пересекается с другой");
@@ -82,7 +82,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
             Subtask subtask = gson.fromJson(bodyTask, Subtask.class);
             if (taskManager.createSubtask(subtask, taskManager.getEpicTaskByID(subtask.getEpicID())) != null) {
                 exchange.sendResponseHeaders(201, 0);
-                writeToUser(exchange, "Задача создана - " + subtask.toString());
+                writeToUser(exchange, "Задача создана - " + subtask);
             } else {
                 exchange.sendResponseHeaders(406, 0);
                 writeToUser(exchange, "Ошибка 406, Задача пересекается с другой");

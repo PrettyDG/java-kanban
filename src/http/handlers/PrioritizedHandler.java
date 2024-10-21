@@ -10,7 +10,7 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
     private static TaskManager taskManager;
 
     public PrioritizedHandler(TaskManager taskManager) {
-        this.taskManager = taskManager;
+        PrioritizedHandler.taskManager = taskManager;
     }
 
     @Override

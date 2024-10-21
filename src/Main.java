@@ -16,16 +16,16 @@ public class Main {
         HttpTaskServer httpTaskServer;
         InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
-        DefaultTask defaultTask1 = new DefaultTask(0, "Task1", "Task1 description"
-                , TaskStage.NEW, LocalDateTime.of(2024, 10, 4, 19, 0), Duration.ofMinutes(30));
+        DefaultTask defaultTask1 = new DefaultTask(0, "Task1", "Task1 description",
+                TaskStage.NEW, LocalDateTime.of(2024, 10, 4, 19, 0), Duration.ofMinutes(30));
         defaultTask1.setStage(TaskStage.NEW);
         inMemoryTaskManager.createDefaultTask(defaultTask1);
 
         Epic epic1 = new Epic(1, "Epic1", "Epic1 description", TaskStage.NEW);
         inMemoryTaskManager.createEpicTask(epic1);
 
-        Subtask subtask1 = new Subtask(1, "Subtask2", "Subtask2 description3"
-                , TaskStage.NEW, 0, LocalDateTime.now().minusHours(5), Duration.ofMinutes(30));
+        Subtask subtask1 = new Subtask(1, "Subtask2", "Subtask2 description3",
+                TaskStage.NEW, 0, LocalDateTime.now().minusHours(5), Duration.ofMinutes(30));
         inMemoryTaskManager.createSubtask(subtask1, epic1);
 
         try {
