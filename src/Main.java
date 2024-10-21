@@ -1,34 +1,42 @@
-import controllers.FileBackedTaskManager;
+import controllers.InMemoryTaskManager;
 import controllers.TaskManager;
+import http.HttpTaskServer;
+import models.DefaultTask;
+import models.Epic;
+import models.Subtask;
 import models.Task;
+import utils.TaskStage;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
 
-        File file = new File("src/resources/file.txt");
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("id,type,name,status,description,startTime,duration,epicID\n");
-            writer.write("0,TASK,Task1,NEW,Description task1,16:00 04.10.2024,30\n");
-            writer.write("1,EPIC,Epic2,DONE,Description epic2,17:00 04.10.2024,30\n");
-            writer.write("2,SUBTASK,Sub Task2,DONE,Description subtask2,18:00 04.10.2024,30,1\n");
-            writer.write("3,SUBTASK,Sub Task3,NEW,Description subtask3,19:00 04.10.2024,30,1\n");
-            writer.write("4,SUBTASK,Sub Task4,DONE,Description subtask4,19:00 04.10.2024,30,1\n");
-        } catch (IOException exception) {
-            System.out.println("Ошибка записи в файл");
+        HttpTaskServer httpTaskServer;
+        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+
+        DefaultTask defaultTask1 = new DefaultTask(0, "Task1", "Task1 description"
+                , TaskStage.NEW, LocalDateTime.of(2024, 10, 4, 19, 0), Duration.ofMinutes(30));
+        defaultTask1.setStage(TaskStage.NEW);
+        inMemoryTaskManager.createDefaultTask(defaultTask1);
+
+        Epic epic1 = new Epic(1, "Epic1", "Epic1 description", TaskStage.NEW);
+        inMemoryTaskManager.createEpicTask(epic1);
+
+        Subtask subtask1 = new Subtask(1, "Subtask2", "Subtask2 description3"
+                , TaskStage.NEW, 0, LocalDateTime.now().minusHours(5), Duration.ofMinutes(30));
+        inMemoryTaskManager.createSubtask(subtask1, epic1);
+
+        try {
+            httpTaskServer = new HttpTaskServer(inMemoryTaskManager);
+            httpTaskServer.start();
+            System.out.println("HTTP-сервер запущен");
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        fileBackedTaskManager = FileBackedTaskManager.loadFromFile(file);
-
-        System.out.println("Время завершения эпика ID1 - " + fileBackedTaskManager.getEpicTaskByID(1).getEndTime(fileBackedTaskManager));
-
-
-        printAllTasks(fileBackedTaskManager);
     }
 
     private static void printAllTasks(TaskManager manager) {

@@ -6,11 +6,14 @@ import models.Subtask;
 import models.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
+    List<Task> getPrioritizedTasks();
+
     DefaultTask createDefaultTask(DefaultTask currentTask);
 
-    DefaultTask updateDefaultTask(int id);
+    DefaultTask updateDefaultTask(int id, DefaultTask defaultTask);
 
     DefaultTask deleteDefaultTaskByID(int id);
 

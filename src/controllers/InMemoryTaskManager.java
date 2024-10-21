@@ -22,6 +22,19 @@ public class InMemoryTaskManager implements TaskManager {
     };
     protected final Set<Task> prioritizedTasks = new TreeSet<>(timeComparator);
 
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
+    }
+
+    public boolean isTasksCrossing(Task task) {
+        if (getPrioritizedTasks().isEmpty()) return false;
+        return getPrioritizedTasks().stream().anyMatch(task1 -> isCrossing(task1, task));
+    }
+
+    public boolean isCrossing(Task task1, Task task2) {
+        return task1.getStartTime().isBefore(task2.getEndTime()) && task1.getEndTime().isAfter(task2.getStartTime());
+    }
+
 
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> allTasks = new ArrayList<>();
@@ -33,18 +46,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public DefaultTask createDefaultTask(DefaultTask currentTask) {
-        defaultTasksHash.put(idNumberForTasks, currentTask);
-        currentTask.setId(idNumberForTasks);
-        idNumberForTasks++;
-        prioritizedTasks.add(currentTask);
-        return currentTask;
+        if (!isTasksCrossing(currentTask)) {
+            defaultTasksHash.put(idNumberForTasks, currentTask);
+            currentTask.setId(idNumberForTasks);
+            idNumberForTasks++;
+            prioritizedTasks.add(currentTask);
+            return currentTask;
+        } else {
+            System.out.println("Задача " + currentTask.toString() + " пересекается по времени с другой. Не была создана");
+            return null;
+        }
     }
 
     @Override
-    public DefaultTask updateDefaultTask(int id) {
+    public DefaultTask updateDefaultTask(int id, DefaultTask newDefaultTask) {
         DefaultTask currentTask = defaultTasksHash.get(id);
-        defaultTasksHash.put(idNumberForTasks, currentTask);
-        return currentTask;
+        if (!isTasksCrossing(newDefaultTask)) {
+            defaultTasksHash.remove(id, currentTask);
+            defaultTasksHash.put(id, newDefaultTask);
+            return newDefaultTask;
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -134,7 +157,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic deleteEpicTask(int id) {
         Epic currentTask = epicTasksHash.get(id);
-        prioritizedTasks.remove(currentTask);
         ArrayList<Integer> subtasksIDs = currentTask.getAllSubtasksID();
 
         currentTask.getAllSubtasksID().stream()
@@ -194,14 +216,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask createSubtask(Subtask currentSubtask, Epic currentEpic) {
-        subtaskHash.put(idNumberForTasks, currentSubtask);
-        currentSubtask.setId(idNumberForTasks);
-        currentSubtask.setEpicID(currentEpic.id);
-        currentEpic.setSubtasksID(currentSubtask.getId());
-        idNumberForTasks++;
-        prioritizedTasks.add(currentSubtask);
-        updateEpicTask(currentEpic.id);
-        return currentSubtask;
+        if (!isTasksCrossing(currentSubtask)) {
+            subtaskHash.put(idNumberForTasks, currentSubtask);
+            currentSubtask.setId(idNumberForTasks);
+            currentSubtask.setEpicID(currentEpic.id);
+            currentEpic.setSubtasksID(currentSubtask.getId());
+            idNumberForTasks++;
+            prioritizedTasks.add(currentSubtask);
+            updateEpicTask(currentEpic.id);
+            return currentSubtask;
+        } else {
+            System.out.println("Задача " + currentSubtask.toString() + " пересекается по времени с другой. Не была создана");
+            return null;
+        }
     }
 
     @Override
