@@ -9,12 +9,20 @@ import java.util.ArrayList;
 
 public class Epic extends DefaultTask implements Task {
     private final ArrayList<Integer> subtasksID = new ArrayList<>();
-    LocalDateTime endTime;
+    private LocalDateTime endTime = LocalDateTime.now();
 
     public Epic(String taskName, String description) {
         super(taskName, description);
         super.type = "EPIC";
         super.setStage(TaskStage.NEW);
+    }
+
+    public Epic(String taskName, String description, LocalDateTime startTime, Duration duration) {
+        super(taskName, description);
+        super.type = "EPIC";
+        super.setStage(TaskStage.NEW);
+        super.setStartTime(startTime);
+        super.setDuration(duration);
     }
 
     public Epic(int id, String taskName, String description, TaskStage stage) {

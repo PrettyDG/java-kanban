@@ -1,12 +1,11 @@
 package http.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import controllers.TaskManager;
 
 import java.io.IOException;
 
-public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
+public class HistoryHandler extends BaseHttpHandler {
     private static TaskManager taskManager;
 
     public HistoryHandler(TaskManager taskManager) {
@@ -14,18 +13,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String method = exchange.getRequestMethod();
-        switch (method) {
-            case "GET":
-                handleGet(exchange);
-                break;
-            default:
-                writeToUser(exchange, "Данный метод не предусмотрен");
-        }
-    }
-
-    public static Object handleGet(HttpExchange exchange) throws IOException {
+    public Object handleGet(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] splitPath = path.split("/");
 
@@ -33,5 +21,15 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
         writeToUser(exchange, taskManager.getHistory().toString());
 
         return taskManager.getHistory();
+    }
+
+    @Override
+    public void handlePost(HttpExchange exchange) throws IOException {
+        writeToUser(exchange, "Данный метод не предусмотрен");
+    }
+
+    @Override
+    public void handleDelete(HttpExchange exchange) throws IOException {
+        writeToUser(exchange, "Данный метод не предусмотрен");
     }
 }

@@ -1,26 +1,16 @@
 package http.handlers;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import controllers.Managers;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class BaseHttpHandler {
+public abstract class BaseHttpHandler implements HttpHandler {
 
-    protected static Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
-            .create();
-
+    protected static Gson gson = Managers.getGson();
 
     public static void writeToUser(HttpExchange exchange, String string) {
         try (OutputStream os = exchange.getResponseBody()) {
@@ -30,32 +20,29 @@ public class BaseHttpHandler {
         }
     }
 
-    static class LocalDateTimeTypeAdapter extends TypeAdapter<LocalDateTime> {
-        private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        String method = exchange.getRequestMethod();
 
-
-        @Override
-        public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
-            jsonWriter.value(localDateTime.format(timeFormatter));
-        }
-
-        @Override
-        public LocalDateTime read(JsonReader jsonReader) throws IOException {
-            return LocalDateTime.parse(jsonReader.nextString(), timeFormatter);
-        }
-    }
-
-    static class DurationTypeAdapter extends TypeAdapter<Duration> {
-        private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
-
-        @Override
-        public void write(JsonWriter jsonWriter, Duration duration) throws IOException {
-            jsonWriter.value(duration.toMinutes());
-        }
-
-        @Override
-        public Duration read(JsonReader jsonReader) throws IOException {
-            return Duration.ofMinutes(Long.parseLong(jsonReader.nextString()));
+        switch (method) {
+            case "GET":
+                handleGet(exchange);
+                break;
+            case "POST":
+                handlePost(exchange);
+                break;
+            case "DELETE":
+                handleDelete(exchange);
+                break;
+            default:
+                writeToUser(exchange, "Данный метод не предусмотрен");
         }
     }
+
+
+    public abstract Object handleGet(HttpExchange exchange) throws IOException;
+
+    public abstract void handlePost(HttpExchange exchange) throws IOException;
+
+    public abstract void handleDelete(HttpExchange exchange) throws IOException;
 }

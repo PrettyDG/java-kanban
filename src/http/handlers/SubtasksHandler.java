@@ -1,7 +1,6 @@
 package http.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import controllers.TaskManager;
 import models.Subtask;
 
@@ -9,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
+public class SubtasksHandler extends BaseHttpHandler {
     private static TaskManager taskManager;
 
     public SubtasksHandler(TaskManager taskManager) {
@@ -17,24 +16,7 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        String method = exchange.getRequestMethod();
-        switch (method) {
-            case "GET":
-                handleGet(exchange);
-                break;
-            case "POST":
-                handlePost(exchange);
-                break;
-            case "DELETE":
-                handleDelete(exchange);
-                break;
-            default:
-                writeToUser(exchange, "Данный метод не предусмотрен");
-        }
-    }
-
-    public static Object handleGet(HttpExchange exchange) throws IOException {
+    public Object handleGet(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] splitPath = path.split("/");
         Integer id = null;
@@ -58,7 +40,8 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    public static void handlePost(HttpExchange exchange) throws IOException {
+    @Override
+    public void handlePost(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] splitPath = path.split("/");
         Integer id = null;
@@ -90,7 +73,8 @@ public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    public static void handleDelete(HttpExchange exchange) throws IOException {
+    @Override
+    public void handleDelete(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
         String[] splitPath = path.split("/");
         Integer id = Integer.parseInt(splitPath[2]);

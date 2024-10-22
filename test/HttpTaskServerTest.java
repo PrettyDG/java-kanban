@@ -1,10 +1,6 @@
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import controllers.InMemoryTaskManager;
+import controllers.Managers;
 import http.HttpTaskServer;
 import models.DefaultTask;
 import models.Epic;
@@ -22,7 +18,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class HttpTaskServerTest {
@@ -31,38 +26,9 @@ public class HttpTaskServerTest {
     InMemoryTaskManager manager = new InMemoryTaskManager();
     // передаём его в качестве аргумента в конструктор HttpTaskServer
     HttpTaskServer taskServer = new HttpTaskServer(manager);
-    Gson gson = new Gson();
+    Gson gson = Managers.getGson();
 
     public HttpTaskServerTest() throws IOException {
-    }
-
-    static class LocalDateTimeTypeAdapter extends TypeAdapter<LocalDateTime> {
-        private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
-
-
-        @Override
-        public void write(JsonWriter jsonWriter, LocalDateTime localDateTime) throws IOException {
-            jsonWriter.value(localDateTime.format(timeFormatter));
-        }
-
-        @Override
-        public LocalDateTime read(JsonReader jsonReader) throws IOException {
-            return LocalDateTime.parse(jsonReader.nextString(), timeFormatter);
-        }
-    }
-
-    static class DurationTypeAdapter extends TypeAdapter<Duration> {
-        private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy");
-
-        @Override
-        public void write(JsonWriter jsonWriter, Duration duration) throws IOException {
-            jsonWriter.value(duration.toMinutes());
-        }
-
-        @Override
-        public Duration read(JsonReader jsonReader) throws IOException {
-            return Duration.parse(jsonReader.nextString());
-        }
     }
 
     @BeforeEach
@@ -81,12 +47,6 @@ public class HttpTaskServerTest {
     public void testAddTask() throws IOException, InterruptedException {
         DefaultTask defaultTask1 = new DefaultTask(0, "Task1", "Task1 description"
                 , TaskStage.NEW, LocalDateTime.of(2024, 10, 4, 19, 0), Duration.ofMinutes(30));
-
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        gson = gsonBuilder.create();
 
         String taskJson = gson.toJson(defaultTask1);
 
@@ -114,12 +74,6 @@ public class HttpTaskServerTest {
         Subtask subtask = new Subtask(1, "Subtask1", "Subtask1 description", TaskStage.NEW, 0
                 , LocalDateTime.of(2022, 10, 4, 19, 0), Duration.ofMinutes(30));
 
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-        gson = gsonBuilder.create();
-
         String taskJson = gson.toJson(subtask);
 
         HttpClient client = HttpClient.newHttpClient();
@@ -138,33 +92,28 @@ public class HttpTaskServerTest {
         Assertions.assertEquals("Subtask1", tasksFromManager.get(0).getTaskName(), "Некорректное имя задачи");
     }
 
-//    @Test
-//    public void testAddEpic() throws IOException, InterruptedException {
-//        Epic epic = new Epic("Epic1", "Epic1 description");
-//
-//
-//        GsonBuilder gsonBuilder = new GsonBuilder();
-//        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter())
-//                .registerTypeAdapter(Duration.class, new DurationTypeAdapter());
-//        gson = gsonBuilder.create();
-//
-//        String taskJson = gson.toJson(epic);
-//
-//        HttpClient client = HttpClient.newHttpClient();
-//        URI url = URI.create("http://localhost:8080/epics");
-//        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
-//
-//
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//
-//        Assertions.assertEquals(201, response.statusCode());
-//
-//        ArrayList<Subtask> tasksFromManager = manager.getAllSubtasks();
-//
-//        Assertions.assertNotNull(tasksFromManager, "Задачи не возвращаются");
-//        Assertions.assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
-//        Assertions.assertEquals("Subtask1", tasksFromManager.get(0).getTaskName(), "Некорректное имя задачи");
-//    }
+
+    @Test
+    public void testAddEpic() throws IOException, InterruptedException {
+        Epic epic = new Epic("Epic1", "Epic1 description", LocalDateTime.now(), Duration.ofMinutes(30));
+
+        String taskJson = gson.toJson(epic);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/epics");
+        HttpRequest request = HttpRequest.newBuilder().uri(url).POST(HttpRequest.BodyPublishers.ofString(taskJson)).build();
+
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        Assertions.assertEquals(201, response.statusCode());
+
+        ArrayList<Epic> tasksFromManager = manager.getEpicTasks();
+
+        Assertions.assertNotNull(tasksFromManager, "Задачи не возвращаются");
+        Assertions.assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
+        Assertions.assertEquals("Epic1", tasksFromManager.get(0).getTaskName(), "Некорректное имя задачи");
+    }
 
     @Test
     public void deleteDefaultTask() throws IOException, InterruptedException {
