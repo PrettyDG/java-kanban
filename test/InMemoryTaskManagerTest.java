@@ -24,7 +24,6 @@ public class InMemoryTaskManagerTest {
     public static void beforeAll() {
         defaultTask1 = new DefaultTask(0, "Task1", "Task1 description"
                 , TaskStage.NEW, LocalDateTime.of(2024, 10, 4, 19, 0), Duration.ofMinutes(30));
-        defaultTask1.setStage(TaskStage.NEW);
         inMemoryTaskManager.createDefaultTask(defaultTask1);
 
         epic1 = new Epic(1, "Epic1", "Epic1 description", TaskStage.NEW);
@@ -70,7 +69,6 @@ public class InMemoryTaskManagerTest {
     @Test
     public void updateTasks() {
         defaultTask1.setStage(TaskStage.IN_PROGRESS);
-        inMemoryTaskManager.updateDefaultTask(0);
         Assertions.assertEquals(TaskStage.IN_PROGRESS, inMemoryTaskManager.getDefaultTaskByID(0).getStage());
 
         subtask1.setStage(TaskStage.IN_PROGRESS);

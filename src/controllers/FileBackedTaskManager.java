@@ -11,9 +11,7 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -50,21 +48,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    public List<Task> getPrioritizedTasks() {
-        return new ArrayList<>(prioritizedTasks);
-    }
-
     @Override
     public DefaultTask createDefaultTask(DefaultTask currentTask) {
-        if (!isTasksCrossing(currentTask)) {
-            super.createDefaultTask(currentTask);
-
-            save();
-            return currentTask;
-        } else {
-            System.out.println("Задача " + currentTask.toString() + " пересекается по времени с другой. Не была создана");
-            return null;
-        }
+        super.createDefaultTask(currentTask);
+        save();
+        return super.createDefaultTask(currentTask);
     }
 
     @Override
@@ -102,14 +90,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public Subtask createSubtask(Subtask currentSubtask, Epic currentEpic) {
-        if (!isTasksCrossing(currentSubtask)) {
-            super.createSubtask(currentSubtask, currentEpic);
-            save();
-            return currentSubtask;
-        } else {
-            System.out.println("Задача " + currentSubtask.toString() + " пересекается по времени с другой. Не была создана");
-            return null;
-        }
+        super.createSubtask(currentSubtask, currentEpic);
+        save();
+        return super.createSubtask(currentSubtask, currentEpic);
     }
 
     @Override
@@ -140,15 +123,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException exception) {
             throw new ManagerSaveException("Произошла ошибка в сохранении!");
         }
-    }
-
-    public boolean isTasksCrossing(Task task) {
-        if (getPrioritizedTasks().isEmpty()) return false;
-        return getPrioritizedTasks().stream().anyMatch(task1 -> isCrossing(task1, task));
-    }
-
-    public boolean isCrossing(Task task1, Task task2) {
-        return task1.getStartTime().isBefore(task2.getEndTime()) && task1.getEndTime().isAfter(task2.getStartTime());
     }
 
 
